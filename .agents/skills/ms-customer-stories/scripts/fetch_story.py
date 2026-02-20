@@ -8,6 +8,7 @@ Examples:
     python fetch_story.py 25666-softbank-corp-azure-ai-foundry
     python fetch_story.py https://www.microsoft.com/en/customers/story/25666-softbank-corp-azure-ai-foundry
 """
+import html
 import json
 import re
 import sys
@@ -24,27 +25,26 @@ HEADERS = {
 }
 
 
-def extract_text_from_html(html):
+def extract_text_from_html(html_str):
     """Extract readable text from HTML, removing tags and excessive whitespace."""
     # Remove script and style elements
-    html = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    html = re.sub(r'<style[^>]*>.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html_str = re.sub(r'<script[^>]*>.*?</script>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
+    html_str = re.sub(r'<style[^>]*>.*?</style>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
     # Remove header and footer
-    html = re.sub(r'<header[^>]*>.*?</header>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    html = re.sub(r'<footer[^>]*>.*?</footer>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html_str = re.sub(r'<header[^>]*>.*?</header>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
+    html_str = re.sub(r'<footer[^>]*>.*?</footer>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
     # Remove nav
-    html = re.sub(r'<nav[^>]*>.*?</nav>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html_str = re.sub(r'<nav[^>]*>.*?</nav>', '', html_str, flags=re.DOTALL | re.IGNORECASE)
     # Remove elements with aria-hidden="true"
-    html = re.sub(r'<[^>]+aria-hidden="true"[^>]*>.*?</[^>]+>', '', html, flags=re.DOTALL)
+    html_str = re.sub(r'<[^>]+aria-hidden="true"[^>]*>.*?</[^>]+>', '', html_str, flags=re.DOTALL)
     # Remove remaining HTML attributes like "> that appear in text
-    html = re.sub(r'\s*">\s*', ' ', html)
+    html_str = re.sub(r'\s*">\s*', ' ', html_str)
     # Convert common block elements to newlines
-    html = re.sub(r'<(?:p|div|h[1-6]|li|br|tr)[^>]*>', '\n', html, flags=re.IGNORECASE)
+    html_str = re.sub(r'<(?:p|div|h[1-6]|li|br|tr)[^>]*>', '\n', html_str, flags=re.IGNORECASE)
     # Remove all remaining HTML tags
-    text = re.sub(r'<[^>]+>', '', html)
+    text = re.sub(r'<[^>]+>', '', html_str)
     # Decode HTML entities
-    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
-    text = text.replace('&quot;', '"').replace('&#39;', "'").replace('&nbsp;', ' ')
+    text = html.unescape(text)
     # Normalize whitespace
     lines = []
     for line in text.split('\n'):
