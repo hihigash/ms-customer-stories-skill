@@ -9,20 +9,45 @@ description: Search and retrieve Microsoft Customer Stories from the official Mi
 
 Search and retrieve customer stories from Microsoft's official Customer Stories site via its internal API.
 
-## Workflow
+## Important: Script Location
 
-1. Analyze the user's request to determine appropriate filters
-2. Run `scripts/search_stories.py` with selected filters to find matching stories
-3. Review results and optionally run `scripts/fetch_story.py` on specific stories for full details
-4. Summarize findings for the user
+The `scripts/` directory and `references/` directory are located **in the same directory as this SKILL.md file**. Before running any commands, locate the directory where this SKILL.md resides and use it as the base path for all script references below.
+
+For example, if this SKILL.md is at `<skill_dir>/SKILL.md`, then:
+- Search script: `<skill_dir>/scripts/search_stories.py`
+- Fetch script: `<skill_dir>/scripts/fetch_story.py`
+- Filter reference: `<skill_dir>/references/filters.md`
+
+## Important: Python Execution
+
+Before running scripts, determine the correct way to invoke Python in the current project. Check in this order:
+
+1. **`uv` is available and `.venv/` exists**: Use `uv run python <script>`
+2. **Virtual environment (`.venv/`) exists without `uv`**: Activate it or use `.venv/Scripts/python <script>` (Windows) / `.venv/bin/python <script>` (macOS/Linux)
+3. **System Python**: Use `python <script>` or `python3 <script>`
+
+Use the detected Python command (referred to as `{python}` below) for all script executions.
 
 ## Prerequisites
 
-Install `requests` in the Python environment: `pip install requests`
+Install the `requests` package in the Python environment. Choose the method that matches your setup:
+
+- **uv**: `uv pip install requests`
+- **pip (venv)**: `pip install requests` (after activating the virtual environment)
+- **pip (system)**: `pip install requests` or `pip3 install requests`
+
+## Workflow
+
+1. Locate the directory containing this SKILL.md to determine script paths (`<skill_dir>`)
+2. Determine the Python execution command (`{python}`) as described above
+3. Analyze the user's request to determine appropriate filters
+4. Run `{python} <skill_dir>/scripts/search_stories.py` with selected filters to find matching stories
+5. Review results and optionally run `{python} <skill_dir>/scripts/fetch_story.py` on specific stories for full details
+6. Summarize findings for the user
 
 ## Step 1: Map User Request to Filters
 
-Translate the user's natural language request into API filter parameters. Consult `references/filters.md` for the complete list of available filter values.
+Translate the user's natural language request into API filter parameters. Consult `<skill_dir>/references/filters.md` for the complete list of available filter values.
 
 **Mapping guidelines:**
 
@@ -46,7 +71,7 @@ Translate the user's natural language request into API filter parameters. Consul
 Run the search script:
 
 ```bash
-python scripts/search_stories.py --products azure/azure-openai --region asia/japan --query "RAG" --top 10
+{python} <skill_dir>/scripts/search_stories.py --products azure/azure-openai --region asia/japan --query "RAG" --top 10
 ```
 
 **Arguments:**
@@ -68,7 +93,7 @@ Output is JSON with `totalCount`, `hasMorePages`, and `stories` array.
 For interesting stories, fetch the full content:
 
 ```bash
-python scripts/fetch_story.py 25666-softbank-corp-azure-ai-foundry
+{python} <skill_dir>/scripts/fetch_story.py 25666-softbank-corp-azure-ai-foundry
 ```
 
 Accepts a story slug or full URL. Returns JSON with `title`, `description`, `content`.

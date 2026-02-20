@@ -16,9 +16,25 @@ A [GitHub Copilot Skill](https://docs.github.com/en/copilot/customizing-copilot/
 
 ## Setup
 
+### Using uv (recommended)
+
 ```bash
+# Windows
 uv venv .venv
 uv pip install requests --python .venv/Scripts/python.exe
+
+# macOS / Linux
+uv venv .venv
+uv pip install requests --python .venv/bin/python
+```
+
+### Using pip
+
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS / Linux: source .venv/bin/activate
+pip install requests
 ```
 
 ## Project Structure
@@ -34,6 +50,9 @@ uv pip install requests --python .venv/Scripts/python.exe
 ```
 
 ## Usage Examples
+
+> **Note:** Replace `python` with the appropriate command for your environment:
+> `uv run python` (uv), `.venv/Scripts/python` (Windows venv), `.venv/bin/python` (macOS/Linux venv), or `python3`.
 
 Search for stories:
 
